@@ -1,0 +1,56 @@
+﻿{
+  "welcome_photo_file_id": "AgACAgIAAxkBAAOGaO9GpgQ2J5ELW2eLay_YIlsxezgAAmL4MRvIGHlLWfjqMfjaCcQBAAMCAAN5AAM2BA",
+  "texts": {
+    "ru": {
+      "choose_lang": "Выберите язык / Choose language:",
+      "welcome": "Привет! Мы — Александр и Ольга. Три года назад приехали на Пхукет просто отдохнуть, а остались здесь навсегда. Теперь этот остров — наш дом, а море, солнце и тропическая зелень — часть повседневной жизни. Мы создали <b>Phuket Holiday Apartments</b>, чтобы рассказать об этом райском острове и познакомить вас с нашими уютными квартирами у моря — рядом с пляжами <b>Nai Yang</b> и <b>Rawai</b>. Здесь всё для тех, кто хочет почувствовать себя местным и насладиться жизнью на острове без спешки. Минимальный срок проживания — от 30 дней. Пхукет — это не просто курорт, а особая атмосфера спокойствия и уюта, которой мы делимся с нашими гостями 🌴",
+      "which_apt": "🏡 Какой объект Вас заинтересовал?",
+      "want_request": "Хотите оставить заявку?",
+      "btn_yes": "Да",
+      "btn_no": "Нет",
+      "q_dates": "📅 Укажите даты заезда/выезда (например: 10 января – 10 февраля):",
+      "q_guests": "👨‍👩‍👧 Сколько гостей (взрослые/дети)?",
+      "q_name": "💬 Как к Вам обращаться (имя)?",
+      "q_contact": "📞 Контакт для связи (WhatsApp/Telegram/телефон):",
+      "q_wishes": "✨ Пожелания (опционально). Если нет — напишите “–”",
+      "request_sent": "✅ Спасибо! Отправили заявку администратору, скоро свяжемся с Вами."
+    },
+    "en": {
+      "choose_lang": "Выберите язык / Choose language:",
+      "welcome": "Hi! We’re Alexander and Olga. Three years ago, we came to Phuket just for a short vacation — and ended up staying for good. Now this island is our home, and the sea, sun, and tropical greenery have become part of our everyday life. We created <b>Phuket Holiday Apartments</b> to share the beauty of this tropical island and introduce you to our cozy seaside homes — located near <b>Nai Yang</b> and <b>Rawai</b> beaches. It’s a perfect place for those who want to feel like locals and enjoy island life at a relaxed pace. The minimum stay is 30 days. Phuket is more than just a resort — it’s a special atmosphere of peace and comfort that we’re happy to share with our guests 🌴",
+      "which_apt": "🏡 Which apartment are you interested in?",
+      "want_request": "Would you like to make a booking request?",
+      "btn_yes": "Yes",
+      "btn_no": "No",
+      "q_dates": "📅 Check-in / Check-out dates (e.g. January 10 – February 10):",
+      "q_guests": "👨‍👩‍👧 Number of guests (adults / children):",
+      "q_name": "💬 Your name:",
+      "q_contact": "📞 Contact for communication (WhatsApp / Telegram / phone):",
+      "q_wishes": "✨ Special requests (optional). If none – please write “–”",
+      "request_sent": "✅ Thank you! Your request has been sent to the administrator — we’ll contact you shortly."
+    }
+  },
+  "apartments": {
+    "mars": {
+      "ru_name": "The Title Halo 1 – MARS",
+      "en_name": "The Title Halo 1 – MARS",
+      "photo_file_id": "AgACAgIAAxkBAAONaO9KSvfXu9cSCsf57QoSTKQjyAIAAnP4MRvIGHlLE2QE-Pf2EoQBAAMCAAN5AAM2BA",
+      "ru_caption": "<b>The Title Halo 1 – MARS</b>\n🏡 36 м² • 1 этаж • до 4 гостей\nСветлые апартаменты с кухней и балконом, в комплексе с бассейнами и фитнес-залом, всего в 10 минутах от пляжа <b>Nai Yang</b>.",
+      "en_caption": "<b>The Title Halo 1 – MARS</b>\n🏡 36 m² • Ground floor • Up to 4 guests\nBright apartment with a kitchen and balcony, located in a complex with swimming pools and a fitness center — just a 10-minute walk from <b>Nai Yang Beach</b>."
+    },
+    "jupiter": {
+      "ru_name": "The Title Halo 1 – JUPITER",
+      "en_name": "The Title Halo 1 – JUPITER",
+      "photo_file_id": "AgACAgIAAxkBAAOPaO9KYCqC9AxxmdCLI42bs4xiBuIAAnT4MRvIGHlLA45fiOgg8N8BAAMCAAN5AAM2BA",
+      "ru_caption": "<b>The Title Halo 1 – JUPITER</b>\n🏡 36 м² • 7 этаж • до 4 гостей\nСветлые апартаменты с кухней и балконом, в комплексе с бассейнами и фитнес-залом, всего в 10 минутах от пляжа <b>Nai Yang</b>.",
+      "en_caption": "<b>The Title Halo 1 – JUPITER</b>\n🏡 36 m² • 7th floor • Up to 4 guests\nBright apartment with a kitchen and balcony, located in a complex with swimming pools and a fitness center — just a 10-minute walk from <b>Nai Yang Beach</b>."
+    },
+    "rawai": {
+      "ru_name": "The Title Rawai Phase 3 – West Wing",
+      "en_name": "The Title Rawai Phase 3 – West Wing",
+      "photo_file_id": "AgACAgIAAxkBAAORaO9Kc0oucQ685J0FHOJftW4KIzoAAnX4MRvIGHlLnb48Qkl9RIIBAAMCAAN5AAM2BA",
+      "ru_caption": "<b>The Title Rawai Phase 3 – West Wing</b>\n🏡 50 м² • 1 этаж • до 4 гостей\nПросторные апартаменты с кухней и террасой на первом этаже современного комплекса. Всего 5 минут пешком до пляжа <b>Rawai</b> и набережной с кафе. На территории — бассейны, сауна, фитнес и зелёный сад.",
+      "en_caption": "<b>The Title Rawai Phase 3 – West Wing</b>\n🏡 50 m² • Ground floor • Up to 4 guests\nSpacious apartment with a kitchen and terrace on the ground floor of a modern complex. Just a 5-minute walk to <b>Rawai Beach</b> and the seafront with cafés. The complex features swimming pools, a sauna, a fitness center, and lush green gardens."
+    }
+  }
+}

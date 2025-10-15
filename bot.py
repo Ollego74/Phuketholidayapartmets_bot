@@ -1,6 +1,8 @@
+# bot.py
 import json
 import logging
-import os
+import threading
+from flask import Flask
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import (
@@ -9,24 +11,25 @@ from telegram.ext import (
     ConversationHandler, ContextTypes, filters
 )
 
-# ================= Render/ENV =================
-# РЕКОМЕНДАЦИЯ: хранить секреты в переменных окружения
-BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
-ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID", "0"))
+# ================= ЛОКАЛЬНЫЕ НАСТРОЙКИ =================
+# 🔴 ОБЯЗАТЕЛЬНО: вставь реальные значения ниже
+BOT_TOKEN = "8088096127:AAGM3rWPCASkYPP3QEik_s7RuOVqQHfb8CA"
+ADMIN_CHAT_ID = 1402922835  # твой Telegram ID (число)
 
-# ================= Logging ===================
+# ================= ЛОГИ =================
 logging.basicConfig(
     format="%(asctime)s %(levelname)s %(message)s",
     level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
-# ================= States & Keys =============
+# ================= СОСТОЯНИЯ ДИАЛОГА =================
 LANG, PICK_APT, AFTER_APT, FORM_DATES, FORM_GUESTS, FORM_NAME, FORM_CONTACT, FORM_WISHES = range(8)
 UD_LANG = "lang"
 UD_APT = "apt_key"
 UD_FORM = "form"
 
+# ================= ДАННЫЕ =================
 with open("data.json", "r", encoding="utf-8-sig") as f:
     DATA = json.load(f)
 
@@ -52,7 +55,7 @@ def k_yesno(lang: str) -> InlineKeyboardMarkup:
         InlineKeyboardButton(t(lang, "btn_no"), callback_data="no")
     ]])
 
-# =============== Handlers ====================
+# ================= ОБРАБОТЧИКИ =================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(t("ru", "choose_lang"), reply_markup=k_lang())
@@ -184,10 +187,10 @@ async def helper_photo_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         fid = update.message.photo[-1].file_id
         await update.message.reply_text(f"file_id: <code>{fid}</code>", parse_mode=ParseMode.HTML)
 
-# =============== App bootstrap =================
+# ================= ИНИЦИАЛИЗАЦИЯ =================
 def build_app() -> Application:
     if not BOT_TOKEN:
-        raise RuntimeError("BOT_TOKEN env var is not set")
+        raise RuntimeError("BOT_TOKEN is empty")
     app: Application = ApplicationBuilder().token(BOT_TOKEN).build()
 
     conv = ConversationHandler(
@@ -211,11 +214,7 @@ def build_app() -> Application:
     app.add_handler(MessageHandler(filters.PHOTO, helper_photo_id))
     return app
 
-# ======== Mini Flask server to keep Render Web Service alive ========
-# (если позже переведём на Background Worker — это можно убрать)
-from flask import Flask
-import threading
-
+# ======= Мини-сервер для Render (keep-alive) =======
 flask_app = Flask(__name__)
 
 @flask_app.get("/")
@@ -223,15 +222,16 @@ def health():
     return "Bot is alive!", 200
 
 def run_flask():
+    # Render Web Service ожидает открытый порт
     flask_app.run(host="0.0.0.0", port=8080)
 
 def main():
     logger.info("Starting bot...")
-    # поднимем Flask в отдельном потоке, чтобы Render видел HTTP-порт
     threading.Thread(target=run_flask, daemon=True).start()
 
     app = build_app()
     logger.info("Bot started!")
+    # В pTB v20 используем run_polling (без Updater)
     app.run_polling(close_loop=False)
 
 if __name__ == "__main__":

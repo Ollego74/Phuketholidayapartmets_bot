@@ -1,7 +1,6 @@
-﻿import json
+import json
 import logging
 import os
-from dotenv import load_dotenv
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import (
@@ -10,12 +9,19 @@ from telegram.ext import (
     ConversationHandler, ContextTypes, filters
 )
 
-BOT_TOKEN = "8088096127:AAGM3rWPCASkYPP3QEik_s7RuOVqQHfb8CA"
-ADMIN_CHAT_ID = 1402922835
+# ================= Render/ENV =================
+# РЕКОМЕНДАЦИЯ: хранить секреты в переменных окружения
+BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
+ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID", "0"))
 
-logging.basicConfig(format="%(asctime)s %(levelname)s %(message)s", level=logging.INFO)
+# ================= Logging ===================
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s %(message)s",
+    level=logging.INFO
+)
 logger = logging.getLogger(__name__)
 
+# ================= States & Keys =============
 LANG, PICK_APT, AFTER_APT, FORM_DATES, FORM_GUESTS, FORM_NAME, FORM_CONTACT, FORM_WISHES = range(8)
 UD_LANG = "lang"
 UD_APT = "apt_key"
@@ -46,13 +52,12 @@ def k_yesno(lang: str) -> InlineKeyboardMarkup:
         InlineKeyboardButton(t(lang, "btn_no"), callback_data="no")
     ]])
 
-# /start
+# =============== Handlers ====================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(t("ru", "choose_lang"), reply_markup=k_lang())
     return LANG
 
-# выбор языка
 async def on_lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
     q = update.callback_query
     await q.answer()
@@ -69,7 +74,6 @@ async def on_lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await q.message.reply_text(t(lang, "which_apt"), reply_markup=k_apts(lang))
     return PICK_APT
 
-# выбор объекта
 async def on_pick_apartment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     q = update.callback_query
     await q.answer()
@@ -88,7 +92,6 @@ async def on_pick_apartment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await q.message.reply_text(t(lang, "want_request"), reply_markup=k_yesno(lang))
     return AFTER_APT
 
-# да/нет — начать анкету
 async def on_yesno(update: Update, context: ContextTypes.DEFAULT_TYPE):
     q = update.callback_query
     await q.answer()
@@ -145,7 +148,7 @@ async def form_wishes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     if ADMIN_CHAT_ID:
         try:
-            await context.bot.send_message(chat_id=int(ADMIN_CHAT_ID), text=admin_msg)
+            await context.bot.send_message(chat_id=ADMIN_CHAT_ID, text=admin_msg)
         except Exception as e:
             logger.error(f"Failed to send admin message: {e}")
 
@@ -153,12 +156,8 @@ async def form_wishes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Чтобы начать заново, нажмите /start")
     return ConversationHandler.END
 
-# ─────────────────────────────────────────────────────────────
-# /contacts — новый обработчик
 async def contacts(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # можно будет определить язык, если пользователь уже выбирал
     lang = context.user_data.get(UD_LANG, "ru")
-
     text_ru = (
         "📞 <b>Контакты Phuket Holiday Apartments</b>\n"
         "Свяжитесь с нами удобным способом:"
@@ -167,18 +166,15 @@ async def contacts(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "📞 <b>Contacts — Phuket Holiday Apartments</b>\n"
         "Reach us via your preferred method:"
     )
-
     buttons = [
         [InlineKeyboardButton("🌐 Website", url="https://phuket.holiday.apartments")],
         [InlineKeyboardButton("💬 WhatsApp", url="https://wa.me/66621839495")],
         [InlineKeyboardButton("✈️ Telegram", url="https://t.me/phuketholidayapartments")],
         [InlineKeyboardButton("📸 Instagram", url="https://instagram.com/phuket_holiday_apartments")]
     ]
-
     msg = text_ru if lang == "ru" else text_en
     await update.message.reply_text(msg, parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(buttons))
 
-# ─────────────────────────────────────────────────────────────
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Диалог завершён. /start")
     return ConversationHandler.END
@@ -188,11 +184,10 @@ async def helper_photo_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         fid = update.message.photo[-1].file_id
         await update.message.reply_text(f"file_id: <code>{fid}</code>", parse_mode=ParseMode.HTML)
 
-# ─────────────────────────────────────────────────────────────
-def main():
+# =============== App bootstrap =================
+def build_app() -> Application:
     if not BOT_TOKEN:
-        raise RuntimeError("BOT_TOKEN is not set")
-
+        raise RuntimeError("BOT_TOKEN env var is not set")
     app: Application = ApplicationBuilder().token(BOT_TOKEN).build()
 
     conv = ConversationHandler(
@@ -214,9 +209,30 @@ def main():
     app.add_handler(conv)
     app.add_handler(CommandHandler("contacts", contacts))
     app.add_handler(MessageHandler(filters.PHOTO, helper_photo_id))
+    return app
 
+# ======== Mini Flask server to keep Render Web Service alive ========
+# (если позже переведём на Background Worker — это можно убрать)
+from flask import Flask
+import threading
+
+flask_app = Flask(__name__)
+
+@flask_app.get("/")
+def health():
+    return "Bot is alive!", 200
+
+def run_flask():
+    flask_app.run(host="0.0.0.0", port=8080)
+
+def main():
+    logger.info("Starting bot...")
+    # поднимем Flask в отдельном потоке, чтобы Render видел HTTP-порт
+    threading.Thread(target=run_flask, daemon=True).start()
+
+    app = build_app()
     logger.info("Bot started!")
-    app.run_polling()
+    app.run_polling(close_loop=False)
 
 if __name__ == "__main__":
     main()
